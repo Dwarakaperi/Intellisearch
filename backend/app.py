@@ -99,16 +99,29 @@ h1,h2,h3,h4,h5,h6
 """
 
 # ----------------------------- LOAD INDEXES -----------------------------
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+INDEX_DIR = (BASE_DIR / ".." / "output").resolve()
+
 @st.cache_resource
 def load_indexes():
-    base = "C:/Projects/HybridSearchEngine/output"
-    with open(f"{base}/positional_index.json", "r", encoding="utf-8") as f:
+    # DEBUG LINES — PUT THEM HERE
+    st.sidebar.write(f"INDEX_DIR: {INDEX_DIR}")
+    st.sidebar.write(f"Index exists? {(INDEX_DIR / 'positional_index.json').exists()}")
+
+    # NOW load the files
+    with open(INDEX_DIR / "positional_index.json", "r", encoding="utf-8") as f:
         pos_index = json.load(f)
-    with open(f"{base}/biword_index.json", "r", encoding="utf-8") as f:
+
+    with open(INDEX_DIR / "biword_index.json", "r", encoding="utf-8") as f:
         bi_index = json.load(f)
-    with open(f"{base}/idf.json", "r", encoding="utf-8") as f:
+
+    with open(INDEX_DIR / "idf.json", "r", encoding="utf-8") as f:
         idf = json.load(f)
+
     return pos_index, bi_index, idf
+
 
 # ------------------------- LOAD DOCUMENTS -------------------------
 @st.cache_resource
