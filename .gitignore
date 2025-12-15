@@ -2,7 +2,6 @@ __pycache__/
 *.pyc
 .venv/
 venv/
-backend/data/docs_2000.jsonl
 
 
 # Original large datasets (DO NOT COMMIT)
