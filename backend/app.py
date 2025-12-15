@@ -1,11 +1,19 @@
-import tokenize
+import re
 import streamlit as st
 import json
 from collections import Counter
 from pathlib import Path
 
+def tokenize_text(text: str) -> list[str]:
+    if not text:
+        return []
+    text = text.lower()
+    # keep only letters/numbers/spaces
+    text = re.sub(r"[^a-z0-9\s]+", " ", text)
+    return [t for t in text.split() if t]
+
 BASE_DIR = Path(__file__).resolve().parent
-DOCS_PATH = BASE_DIR / "data" / "docs_2000.jsonl"     # backend/data/docs_2000.jsonl
+DOCS_PATH = BASE_DIR /"backend"/ "data" / "docs_2000.jsonl"     # backend/data/docs_2000.jsonl
 INDEX_DIR = (BASE_DIR / ".." / "output").resolve()    # output/
 
 
@@ -138,8 +146,9 @@ def load_docs():
 
     docs = {}
     cleaned_docs = {}
+    st.sidebar.write(f"Docs exists? {(BASE_DIR /'backend'/'data' / 'docs_2000.jsonl').exists()}")
 
-    with open(DOCS_PATH, "r", encoding="utf-8") as f:
+    with open(BASE_DIR /"backend"/ "data" / "docs_2000.jsonl", "r", encoding="utf-8") as f:
         for line in f:
             if not line.strip():
                 continue
@@ -147,9 +156,8 @@ def load_docs():
             doc_id = entry.get("id") or entry.get("doc_id") or entry.get("_id") or str(len(docs))
             text = entry.get("text") or (entry.get("title", "") + " " + entry.get("abstract", ""))
             docs[doc_id] = text
-            cleaned_docs[doc_id] = tokenize(text)
-
-    return docs, cleaned_docs
+            cleaned_docs[doc_id] = tokenize_text(text)
+            return docs, cleaned_docs
 
 
 # ------------------------- HELPERS -------------------------
