@@ -1,6 +1,13 @@
+import tokenize
 import streamlit as st
 import json
 from collections import Counter
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+DOCS_PATH = BASE_DIR / "data" / "docs_2000.jsonl"     # backend/data/docs_2000.jsonl
+INDEX_DIR = (BASE_DIR / ".." / "output").resolve()    # output/
+
 
 DARK_CSS = """
 <style>
@@ -126,17 +133,24 @@ def load_indexes():
 # ------------------------- LOAD DOCUMENTS -------------------------
 @st.cache_resource
 def load_docs():
+    st.sidebar.write(f"DOCS_PATH: {DOCS_PATH}")
+    st.sidebar.write(f"Docs exists? {DOCS_PATH.exists()}")
+
     docs = {}
     cleaned_docs = {}
-    path = "C:/Projects/HybridSearchEngine/data/docs_2000.jsonl"
 
-    with open(path, "r", encoding="utf-8") as f:
+    with open(DOCS_PATH, "r", encoding="utf-8") as f:
         for line in f:
-            item = json.loads(line)
-            docs[item["id"]] = item["text"]
-            cleaned_docs[item["id"]] = item["text"].lower().split()
+            if not line.strip():
+                continue
+            entry = json.loads(line)
+            doc_id = entry.get("id") or entry.get("doc_id") or entry.get("_id") or str(len(docs))
+            text = entry.get("text") or (entry.get("title", "") + " " + entry.get("abstract", ""))
+            docs[doc_id] = text
+            cleaned_docs[doc_id] = tokenize(text)
 
     return docs, cleaned_docs
+
 
 # ------------------------- HELPERS -------------------------
 def intersect(a, b):
