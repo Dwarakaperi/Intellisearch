@@ -13,7 +13,7 @@ def tokenize_text(text: str) -> list[str]:
     return [t for t in text.split() if t]
 
 BASE_DIR = Path(__file__).resolve().parent
-DOCS_PATH = BASE_DIR /"backend"/ "data" / "docs_2000.jsonl"     # backend/data/docs_2000.jsonl
+DOCS_PATH = BASE_DIR / "data" / "docs_2000.jsonl"     # backend/data/docs_2000.jsonl
 INDEX_DIR = (BASE_DIR / ".." / "output").resolve()    # output/
 
 
@@ -146,9 +146,9 @@ def load_docs():
 
     docs = {}
     cleaned_docs = {}
-    st.sidebar.write(f"Docs exists? {(BASE_DIR /'backend'/'data' / 'docs_2000.jsonl').exists()}")
+    st.sidebar.write(f"Docs exists? {(BASE_DIR /'data' / 'docs_2000.jsonl').exists()}")
 
-    with open(BASE_DIR /"backend"/ "data" / "docs_2000.jsonl", "r", encoding="utf-8") as f:
+    with open(BASE_DIR / "data" / "docs_2000.jsonl", "r", encoding="utf-8") as f:
         for line in f:
             if not line.strip():
                 continue
